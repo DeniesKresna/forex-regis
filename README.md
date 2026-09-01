@@ -1,0 +1,70 @@
+# MT License Manager
+
+Laravel + Tailwind + MySQL application for managing MetaTrader EA subscriptions.
+
+## Requirements
+
+Only Docker with Docker Compose is required.
+
+## Start
+
+```bash
+docker compose up -d --build
+```
+
+Open http://localhost:8080
+
+Default admin:
+
+- Email: `admin@example.com`
+- Password: `admin12345`
+
+Change the password after first login.
+
+## Stop
+
+```bash
+docker compose down
+```
+
+## Reset database
+
+This removes all application data including MySQL volume:
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
+## EA API
+
+```text
+GET /api/metatrader/check?server_name=YOUR_SERVER&account_number=YOUR_ACCOUNT
+```
+
+Active response:
+
+```json
+{
+  "success": true,
+  "active": true,
+  "expired_date": "2026-10-20"
+}
+```
+
+Unknown account returns HTTP 404.
+
+## Payment rule
+
+Default configuration:
+
+```json
+{
+  "10000": 3,
+  "50000": 30
+}
+```
+
+A payment must exactly match a configured amount. If the MT account is active, the duration is added to its current expiry. If it is expired or has no expiry, duration is added from today.
+
+Payment records store the resolved duration and before/after expiry snapshots.

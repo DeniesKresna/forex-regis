@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers;
+use App\Models\Payment;use App\Models\MetaTraderAccount;use App\Services\PaymentService;use Illuminate\Http\Request;
+class PaymentController extends Controller {public function index(){return view('payments.index',['payments'=>Payment::with('metatraderAccount.user')->latest()->paginate(20)]);}public function create(){return view('payments.create',['accounts'=>MetaTraderAccount::with('user')->orderBy('account_number')->get()]);}public function store(Request $r,PaymentService $service){$d=$r->validate(['metatrader_account_id'=>'required|exists:metatrader_accounts,id','amount'=>'required|numeric|min:1']);$service->create(MetaTraderAccount::findOrFail($d['metatrader_account_id']),$d['amount']);return redirect()->route('payments.index')->with('success','Payment recorded and expiry extended.');}}
