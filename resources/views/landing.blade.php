@@ -23,7 +23,7 @@
                 </p>
 
                 <div class="mt-8 flex flex-col gap-4 sm:flex-row">
-                    <a href="{{ route('indicators.download') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-300">
+                    <a href="{{ asset('indicators.zip') }}" class="inline-flex items-center justify-center rounded-xl bg-emerald-400 px-6 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-300">
                         Download indicators.zip
                     </a>
                     <a href="https://wa.me/6281357006008" target="_blank" rel="noreferrer" class="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-base font-semibold text-white transition hover:bg-white/10">
