@@ -6,8 +6,12 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MetaTraderAccountController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ConfigController;
-Route::get('/login', [AuthController::class,'showLogin'])->name('login');
-Route::post('/login', [AuthController::class,'login'])->name('login.store');
+Route::middleware('guest')->group(function () {
+  Route::get('/login', [AuthController::class,'showLogin'])->name('login');
+  Route::post('/login', [AuthController::class,'login'])->name('login.store');
+  Route::get('/login/otp', [AuthController::class,'showOtp'])->name('login.otp');
+  Route::post('/login/otp', [AuthController::class,'verifyOtp'])->name('login.otp.verify');
+});
 Route::post('/logout', [AuthController::class,'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
   Route::get('/', fn()=>redirect()->route('dashboard'));

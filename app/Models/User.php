@@ -20,4 +20,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(MetaTraderAccount::class);
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->roles()->where('name', 'admin')->exists();
+    }
 }

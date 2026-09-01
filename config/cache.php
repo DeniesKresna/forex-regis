@@ -1,2 +1,11 @@
 <?php
-return ['default' => env('CACHE_STORE', 'file'), 'stores' => ['file' => ['driver' => 'file', 'path' => storage_path('framework/cache/data')], 'array' => ['driver' => 'array']], 'prefix' => env('CACHE_PREFIX', 'mt_license_cache')];
+
+return [
+	'default' => env('CACHE_STORE', 'file'),
+	'stores' => [
+		'file' => ['driver' => 'file', 'path' => storage_path('framework/cache/data')],
+		'array' => ['driver' => 'array'],
+		'redis' => ['driver' => 'redis', 'connection' => 'cache'],
+	],
+	'prefix' => env('CACHE_PREFIX', 'mt_license_cache'),
+];
