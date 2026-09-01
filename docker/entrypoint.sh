@@ -9,6 +9,11 @@ if [ -z "$(grep '^APP_KEY=' .env | cut -d= -f2-)" ]; then
   php artisan key:generate --force
 fi
 
+if [ ! -f vendor/autoload.php ] && [ -d /opt/vendor ]; then
+  mkdir -p vendor
+  cp -a /opt/vendor/. vendor/
+fi
+
 php artisan config:clear >/dev/null 2>&1 || true
 
 echo "Waiting for MySQL..."

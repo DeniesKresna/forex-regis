@@ -15,10 +15,12 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class,'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
   Route::get('/', fn()=>redirect()->route('dashboard'));
-  Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
-  Route::resource('users',UserController::class)->except(['show']);
-  Route::resource('metatrader-accounts',MetaTraderAccountController::class)->except(['show']);
-  Route::resource('payments',PaymentController::class)->only(['index','create','store']);
-  Route::get('/config/payment',[ConfigController::class,'editPayment'])->name('config.payment.edit');
-  Route::put('/config/payment',[ConfigController::class,'updatePayment'])->name('config.payment.update');
+  Route::prefix('dashboard')->group(function () {
+    Route::get('/', [DashboardController::class,'index'])->name('dashboard');
+    Route::resource('users',UserController::class)->except(['show']);
+    Route::resource('metatrader-accounts',MetaTraderAccountController::class)->except(['show']);
+    Route::resource('payments',PaymentController::class)->only(['index','create','store']);
+    Route::get('/config/payment',[ConfigController::class,'editPayment'])->name('config.payment.edit');
+    Route::put('/config/payment',[ConfigController::class,'updatePayment'])->name('config.payment.update');
+  });
 });

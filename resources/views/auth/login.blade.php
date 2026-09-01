@@ -8,7 +8,7 @@
 </head>
 <body class="min-h-screen bg-slate-100 flex items-center justify-center p-5">
     <form method="POST" action="{{ route('login.store') }}" class="w-full max-w-md bg-white p-8 rounded-2xl shadow">
-        <h1 class="text-2xl font-bold mb-2">MT License Manager</h1>
+        <h1 class="text-2xl font-bold mb-2">Forex Community Van Den Prise</h1>
         <p class="text-slate-500 mb-6">Admin login</p>
         @csrf
         <label class="block text-sm font-medium">Email</label>

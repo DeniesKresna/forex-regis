@@ -4,14 +4,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>{{ $title ?? 'MT License Manager' }}</title>
+    <title>{{ $title ?? 'Forex Community Van Den Prise' }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-slate-50 text-slate-900">
     <div class="min-h-screen flex">
         <aside class="w-64 bg-slate-900 text-white p-5 hidden md:block">
-            <div class="text-xl font-bold mb-8">MT License</div>
+            <div class="text-xl font-bold mb-8">FC Van Den Prise</div>
             <nav class="space-y-1 text-sm"><a class="block rounded px-3 py-2 hover:bg-slate-800"
                     href="{{ route('dashboard') }}">Dashboard</a><a class="block rounded px-3 py-2 hover:bg-slate-800"
                     href="{{ route('users.index') }}">Users</a><a class="block rounded px-3 py-2 hover:bg-slate-800"

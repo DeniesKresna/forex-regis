@@ -9,10 +9,12 @@ Only Docker with Docker Compose is required.
 ## Start
 
 ```bash
-docker compose up -d --build
+docker compose up -d
 ```
 
 Open http://localhost:8080
+
+Code changes are reflected immediately because the project source is bind-mounted into the app container. Rebuild only when you change dependencies or the Docker image itself.
 
 Default admin:
 
@@ -33,7 +35,7 @@ This removes all application data including MySQL volume:
 
 ```bash
 docker compose down -v
-docker compose up -d --build
+docker compose up -d
 ```
 
 ## EA API

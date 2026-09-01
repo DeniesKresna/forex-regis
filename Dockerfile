@@ -7,6 +7,7 @@ FROM php:8.4-cli
 WORKDIR /var/www/html
 RUN docker-php-ext-install pdo_mysql
 COPY --from=vendor /app/vendor ./vendor
+COPY --from=vendor /app/vendor /opt/vendor
 COPY . .
 RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
