@@ -70,7 +70,7 @@
                 <div class="mt-6 rounded-2xl border border-dashed border-white/15 p-5 text-sm leading-7 text-slate-300">
                     <p class="font-semibold text-white">Cara pasang:</p>
                     <ol class="mt-3 space-y-2 list-decimal pl-5">
-                        <li>Download file indikator dari tombol di atas.</li>
+                        <li>Download file indikator dari tombol di download di section kiri.</li>
                         <li>Copy <span class="font-medium text-white">Super Trend</span> dan <span class="font-medium text-white">TG Multitimeframe EMA</span> ke folder <span class="font-medium text-white">Indicators</span> di MT5.</li>
                         <li>Copy <span class="font-medium text-white">DK UFO</span> ke folder <span class="font-medium text-white">Scripts</span> di MT5.</li>
                         <li>Jika ingin memakai DK UFO, lakukan subscription terlebih dahulu.</li>
