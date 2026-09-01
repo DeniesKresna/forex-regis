@@ -1,4 +1,15 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-class Payment extends Model {protected $fillable=['metatrader_account_id','type','amount','duration_days','expired_before','expired_after']; protected function casts():array{return ['amount'=>'decimal:2','expired_before'=>'date','expired_after'=>'date'];} public function metatraderAccount(){return $this->belongsTo(MetaTraderAccount::class);} }
+class Payment extends Model
+{
+    protected $fillable = ['metatrader_account_id', 'type', 'amount', 'update_trading_account_expired', 'duration_days', 'expired_before', 'expired_after'];
+    protected function casts(): array
+    {
+        return ['amount' => 'decimal:2', 'update_trading_account_expired' => 'boolean', 'expired_before' => 'date', 'expired_after' => 'date'];
+    }
+    public function metatraderAccount()
+    {
+        return $this->belongsTo(MetaTraderAccount::class);
+    }
+}

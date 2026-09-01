@@ -1,4 +1,37 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\MetaTraderAccount;use App\Models\User;use Illuminate\Http\Request;
-class MetaTraderAccountController extends Controller {public function index(){return view('metatrader-accounts.index',['accounts'=>MetaTraderAccount::with('user')->latest()->paginate(15)]);}public function create(){return view('metatrader-accounts.create',['users'=>User::orderBy('name')->get()]);}public function store(Request $r){$d=$r->validate(['user_id'=>'required|exists:users,id','server_name'=>'required|string|max:255','account_number'=>'required|string|max:100','balance'=>'nullable|numeric|min:0','expired_date'=>'nullable|date']);MetaTraderAccount::create($d);return redirect()->route('metatrader-accounts.index')->with('success','MetaTrader account created.');}public function edit(MetaTraderAccount $metatrader_account){return view('metatrader-accounts.edit',['account'=>$metatrader_account,'users'=>User::orderBy('name')->get()]);}public function update(Request $r,MetaTraderAccount $metatrader_account){$d=$r->validate(['user_id'=>'required|exists:users,id','server_name'=>'required|string|max:255','account_number'=>'required|string|max:100','balance'=>'nullable|numeric|min:0','expired_date'=>'nullable|date']);$metatrader_account->update($d);return back()->with('success','Account updated.');}public function destroy(MetaTraderAccount $metatrader_account){$metatrader_account->delete();return back()->with('success','Account deleted.');}}
+use App\Models\MetaTraderAccount;
+use App\Models\User;
+use Illuminate\Http\Request;
+class MetaTraderAccountController extends Controller
+{
+    public function index()
+    {
+        return view('metatrader-accounts.index', ['accounts' => MetaTraderAccount::with('user')->latest()->paginate(15)]);
+    }
+    public function create()
+    {
+        return view('metatrader-accounts.create', ['users' => User::orderBy('name')->get()]);
+    }
+    public function store(Request $r)
+    {
+        $d = $r->validate(['user_id' => 'required|exists:users,id', 'server_name' => 'required|string|max:255', 'account_number' => 'required|string|max:100', 'balance' => 'nullable|numeric|min:0', 'expired_date' => 'nullable|date']);
+        MetaTraderAccount::create($d);
+        return redirect()->route('metatrader-accounts.index')->with('success', 'MetaTrader account created.');
+    }
+    public function edit(MetaTraderAccount $metatrader_account)
+    {
+        return view('metatrader-accounts.edit', ['account' => $metatrader_account, 'users' => User::orderBy('name')->get()]);
+    }
+    public function update(Request $r, MetaTraderAccount $metatrader_account)
+    {
+        $d = $r->validate(['user_id' => 'required|exists:users,id', 'server_name' => 'required|string|max:255', 'account_number' => 'required|string|max:100', 'balance' => 'nullable|numeric|min:0', 'expired_date' => 'nullable|date']);
+        $metatrader_account->update($d);
+        return back()->with('success', 'Account updated.');
+    }
+    public function destroy(MetaTraderAccount $metatrader_account)
+    {
+        $metatrader_account->delete();
+        return back()->with('success', 'Account deleted.');
+    }
+}

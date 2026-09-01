@@ -1,1 +1,18 @@
-<div class="space-y-4"><div><label>User</label><select name="user_id" class="w-full border rounded-lg px-3 py-2">@foreach($users as $u)<option value="{{ $u->id }}" @selected(old('user_id',$account->user_id??'')==$u->id)>{{ $u->name }} — {{ $u->email }}</option>@endforeach</select></div><div><label>Server Name</label><input name="server_name" value="{{ old('server_name',$account->server_name??'') }}" class="w-full border rounded-lg px-3 py-2"></div><div><label>Account Number</label><input name="account_number" value="{{ old('account_number',$account->account_number??'') }}" class="w-full border rounded-lg px-3 py-2"></div><div><label>Balance</label><input name="balance" type="number" step="0.01" value="{{ old('balance',$account->balance??0) }}" class="w-full border rounded-lg px-3 py-2"></div><div><label>Expired Date</label><input name="expired_date" type="date" value="{{ old('expired_date',isset($account)&&$account->expired_date?$account->expired_date->format('Y-m-d'):'') }}" class="w-full border rounded-lg px-3 py-2"><p class="text-xs text-slate-500">Can be manually adjusted by admin.</p></div><button class="bg-slate-900 text-white px-4 py-2 rounded-lg">{{ $button }}</button></div>
+<div class="space-y-4">
+    <div><label>User</label><select name="user_id" class="w-full border rounded-lg px-3 py-2">@foreach($users as $u)
+        <option value="{{ $u->id }}" @selected(old('user_id', $account->user_id ?? '') == $u->id)>{{ $u->name }} —
+    {{ $u->email }}</option>@endforeach
+        </select></div>
+    <div><label>Server Name</label><input name="server_name" value="{{ old('server_name', $account->server_name ?? '') }}"
+            class="w-full border rounded-lg px-3 py-2"></div>
+    <div><label>Account Number</label><input name="account_number"
+            value="{{ old('account_number', $account->account_number ?? '') }}" class="w-full border rounded-lg px-3 py-2">
+    </div>
+    <div><label>Balance</label><input name="balance" type="number" step="0.01"
+            value="{{ old('balance', $account->balance ?? 0) }}" class="w-full border rounded-lg px-3 py-2"></div>
+    <div><label>Expired Date</label><input name="expired_date" type="date"
+            value="{{ old('expired_date', isset($account) && $account->expired_date ? $account->expired_date->format('Y-m-d') : '') }}"
+            class="w-full border rounded-lg px-3 py-2">
+        <p class="text-xs text-slate-500">Can be manually adjusted by admin.</p>
+    </div><button class="bg-slate-900 text-white px-4 py-2 rounded-lg">{{ $button }}</button>
+</div>

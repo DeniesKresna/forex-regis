@@ -1,1 +1,12 @@
-@extends('layouts.app',['title'=>'Dashboard']) @section('content')<div class="grid md:grid-cols-4 gap-4">@foreach([['Users',$users],['MT Accounts',$accounts],['Active Accounts',$active],['Payments',$payments]] as [$label,$value])<div class="bg-white rounded-xl border p-5"><div class="text-sm text-slate-500">{{ $label }}</div><div class="text-3xl font-bold mt-2">{{ $value }}</div></div>@endforeach</div><div class="mt-6 bg-white border rounded-xl p-6"><h2 class="font-semibold">EA License API</h2><p class="text-sm text-slate-500 mt-2">GET /api/metatrader/check?server_name=...&account_number=...</p></div>@endsection
+@extends('layouts.app', ['title' => 'Dashboard']) @section('content')
+    <div class="grid md:grid-cols-4 gap-4">
+        @foreach([['Users', $users], ['MT Accounts', $accounts], ['Active Accounts', $active], ['Payments', $payments]] as [$label, $value])
+            <div class="bg-white rounded-xl border p-5">
+                <div class="text-sm text-slate-500">{{ $label }}</div>
+                <div class="text-3xl font-bold mt-2">{{ $value }}</div>
+        </div>@endforeach
+    </div>
+    <div class="mt-6 bg-white border rounded-xl p-6">
+        <h2 class="font-semibold">EA License API</h2>
+        <p class="text-sm text-slate-500 mt-2">GET /api/metatrader/check?server_name=...&account_number=...</p>
+</div>@endsection

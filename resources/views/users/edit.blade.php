@@ -1,1 +1,3 @@
-@extends('layouts.app',['title'=>'Edit User']) @section('content')<form method="POST" action="{{ route('users.update',$user) }}" class="bg-white border rounded-xl p-6 max-w-xl">@csrf @method('PUT') @include('users.form',['button'=>'Save Changes'])</form>@endsection
+@extends('layouts.app', ['title' => 'Edit User']) @section('content')
+    <form method="POST" action="{{ route('users.update', $user) }}" class="bg-white border rounded-xl p-6 max-w-xl">@csrf
+@method('PUT') @include('users.form', ['button' => 'Save Changes'])</form>@endsection
