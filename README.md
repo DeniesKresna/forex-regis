@@ -16,6 +16,8 @@ Open http://localhost:8080
 
 Code changes are reflected immediately because the project source is bind-mounted into the app container. Rebuild only when you change dependencies or the Docker image itself.
 
+To run on server port 80, set `APP_PORT=80` in `.env` and change `APP_URL` to your domain or server IP, then run `docker compose up -d`.
+
 Default admin:
 
 - Email: `admin@example.com`
