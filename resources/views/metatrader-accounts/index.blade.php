@@ -25,7 +25,7 @@
                     class="text-emerald-600">●</span>@else<span class="text-red-600">●</span>@endif</td>
                     <td class="p-3 text-right"><a class="text-blue-600"
                             href="{{ route('metatrader-accounts.edit', $a) }}">Edit</a>
-                        <form class="inline" method="POST" action="{{ route('metatrader-accounts.destroy', $a) }}">@csrf
+                        <form class="inline" method="POST" action="{{ route('metatrader-accounts.destroy', $a, false) }}">@csrf
                             @method('DELETE')<button class="text-red-600 ml-3"
                                 onclick="return confirm('Delete account?')">Delete</button></form>
                     </td>

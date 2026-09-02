@@ -1,5 +1,5 @@
 @extends('layouts.app', ['title' => 'Add Payment']) @section('content')
-    <form method="POST" action="{{ route('payments.store') }}" class="bg-white border rounded-xl p-6 max-w-xl">@csrf<div
+    <form method="POST" action="{{ route('payments.store', [], false) }}" class="bg-white border rounded-xl p-6 max-w-xl">@csrf<div
             class="space-y-4">
             <div><label>MetaTrader Account</label><select name="metatrader_account_id"
                     class="w-full border rounded-lg px-3 py-2">@foreach($accounts as $a)

@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-slate-100 flex items-center justify-center p-5">
-    <form method="POST" action="{{ route('login.otp.verify') }}" class="w-full max-w-md bg-white p-8 rounded-2xl shadow">
+    <form method="POST" action="{{ route('login.otp.verify', [], false) }}" class="w-full max-w-md bg-white p-8 rounded-2xl shadow">
         <h1 class="text-2xl font-bold mb-2">Verify OTP</h1>
         <p class="text-slate-500 mb-6">Masukkan OTP yang dikirim ke Discord. Berlaku 1 menit.</p>
 

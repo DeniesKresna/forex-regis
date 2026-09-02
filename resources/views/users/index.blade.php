@@ -19,7 +19,7 @@
                     <td class="p-3">{{ $u->email }}</td>
                     <td class="p-3">{{ $u->roles->pluck('name')->join(', ') }}</td>
                     <td class="p-3 text-right"><a class="text-blue-600" href="{{ route('users.edit', $u) }}">Edit</a>
-                        <form class="inline" method="POST" action="{{ route('users.destroy', $u) }}">@csrf
+                        <form class="inline" method="POST" action="{{ route('users.destroy', $u, false) }}">@csrf
                             @method('DELETE')<button class="text-red-600 ml-3"
                                 onclick="return confirm('Delete user?')">Delete</button></form>
                     </td>

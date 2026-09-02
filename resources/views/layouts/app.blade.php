@@ -20,7 +20,7 @@
                     href="{{ route('payments.index') }}">Payments</a><a
                     class="block rounded px-3 py-2 hover:bg-slate-800" href="{{ route('config.payment.edit') }}">Payment
                     Config</a></nav>
-            <form method="POST" action="{{ route('logout') }}" class="mt-10">@csrf<button
+                <form method="POST" action="{{ route('logout', [], false) }}" class="mt-10">@csrf<button
                     class="w-full text-left px-3 py-2 rounded hover:bg-slate-800">Logout</button></form>
         </aside>
         <main class="flex-1">
