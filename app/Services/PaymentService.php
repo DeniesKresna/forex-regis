@@ -19,6 +19,9 @@ class PaymentService
         return DB::transaction(function () use ($account, $amount, $updateTradingAccountExpired, $type) {
             $config = MetaTraderConfig::where('name', 'payment')->firstOrFail();
             $map = $config->value ?? [];
+            if (isset($map['payment']) && is_array($map['payment'])) {
+                $map = $map['payment'];
+            }
             $key = (string) (int) $amount;
 
             if (! array_key_exists($key, $map)) {

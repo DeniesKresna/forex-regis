@@ -12,14 +12,13 @@
     <div class="min-h-screen flex">
         <aside class="w-64 bg-slate-900 text-white p-5 hidden md:block">
             <div class="text-xl font-bold mb-8">FC Van Den Prise</div>
-            <nav class="space-y-1 text-sm"><a class="block rounded px-3 py-2 hover:bg-slate-800"
+                <nav class="space-y-1 text-sm"><a class="block rounded px-3 py-2 hover:bg-slate-800"
                     href="{{ route('dashboard') }}">Dashboard</a><a class="block rounded px-3 py-2 hover:bg-slate-800"
                     href="{{ route('users.index') }}">Users</a><a class="block rounded px-3 py-2 hover:bg-slate-800"
                     href="{{ route('metatrader-accounts.index') }}">MetaTrader Accounts</a><a
                     class="block rounded px-3 py-2 hover:bg-slate-800"
                     href="{{ route('payments.index') }}">Payments</a><a
-                    class="block rounded px-3 py-2 hover:bg-slate-800" href="{{ route('config.payment.edit') }}">Payment
-                    Config</a></nav>
+                        class="block rounded px-3 py-2 hover:bg-slate-800" href="/dashboard/config">Config</a></nav>
                 <form method="POST" action="{{ route('logout', [], false) }}" class="mt-10">@csrf<button
                     class="w-full text-left px-3 py-2 rounded hover:bg-slate-800">Logout</button></form>
         </aside>
@@ -34,6 +33,7 @@
                             </ul>
                     </div>@endif @yield('content')
             </div>
+            <x-site-footer />
         </main>
     </div>
 </body>
