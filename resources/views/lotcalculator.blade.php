@@ -476,7 +476,9 @@
                 : price - (tp * gap);
 
             const volume = Math.max(0.01, riskAmount / (gap * contractSize));
-            const bep = takeProfit;
+            const bep = currentSide === 'buy'
+                ? price + gap
+                : price - gap;
 
             updateResults({ volume, price, stopLoss, takeProfit, bep, showBep: withBep });
         }
