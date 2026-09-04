@@ -48,6 +48,7 @@ Route::get('/lotcalculator', function (Request $request) {
 Route::post('/lotcalculator/save', function (Request $request) {
   $key = 'calcu_' . md5($request->ip() . '|' . ($request->userAgent() ?? ''));
   $payload = [
+    'symbol' => (string) $request->input('symbol', 'XAU/USD'),
     'balance' => (string) $request->input('balance', ''),
     'risk' => (string) $request->input('risk', ''),
     'entry' => (string) $request->input('entry', ''),
@@ -55,6 +56,7 @@ Route::post('/lotcalculator/save', function (Request $request) {
     'tp' => (string) $request->input('tp', ''),
     'space' => (string) $request->input('space', ''),
     'spread' => (string) $request->input('spread', ''),
+    'quote_to_usd' => (string) $request->input('quote_to_usd', ''),
   ];
 
   Redis::setex($key, 3600, json_encode($payload));

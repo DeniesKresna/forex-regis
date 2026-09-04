@@ -1,7 +1,40 @@
 @extends('layouts.public', ['title' => 'Lot Calculator'])
 
 @section('content')
-@php($setup = $lotCalculatorSetup ?? [])
+@php
+    $setup = $lotCalculatorSetup ?? [];
+    $selectedSymbol = $setup['symbol'] ?? 'XAU/USD';
+    $lotCalculatorPairs = [
+        'EUR/USD',
+        'GBP/USD',
+        'AUD/USD',
+        'NZD/USD',
+        'USD/CAD',
+        'USD/CHF',
+        'USD/JPY',
+        'EUR/GBP',
+        'EUR/AUD',
+        'EUR/NZD',
+        'EUR/CAD',
+        'GBP/CAD',
+        'AUD/CAD',
+        'NZD/CAD',
+        'EUR/CHF',
+        'GBP/CHF',
+        'AUD/CHF',
+        'NZD/CHF',
+        'EUR/JPY',
+        'GBP/JPY',
+        'AUD/JPY',
+        'NZD/JPY',
+        'CAD/CHF',
+        'CAD/JPY',
+        'CHF/JPY',
+        'GBP/AUD',
+        'GBP/NZD',
+        'AUD/NZD',
+    ];
+@endphp
 <div class="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
     <section data-side-panel
         class="rounded-3xl border border-emerald-200 bg-white/95 p-4 text-slate-900 shadow-xl shadow-black/10 backdrop-blur lg:p-5">
@@ -10,12 +43,12 @@
                 <p class="text-xs font-semibold uppercase tracking-[0.22em] text-amber-600">Trading Tools</p>
                 <h1 class="mt-1 text-2xl font-semibold">Lot Calculator</h1>
                 <p class="mt-1 max-w-xl text-sm leading-6 text-slate-600">
-                    Calculate volume, price, stop loss, and take profit for XAU in one screen.
+                    Calculate volume, price, stop loss, and take profit in one screen.
                 </p>
             </div>
-            <button type="button" data-tab="xau"
+            <button type="button" data-tab="forex"
                 class="tab-button rounded-full border border-amber-500 bg-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-sm transition">
-                XAU
+                Forex
             </button>
         </div>
 
@@ -35,11 +68,25 @@
             </div>
         </div>
 
-        <div class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            1 XAU point = 0.01 price unit.
+        <div class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-900" data-instrument-hint>
+            Point size changes by symbol. Cross pairs with non-USD quote need Quote to USD for exact lot sizing.
         </div>
 
         <form id="lotCalculatorForm" class="mt-4 grid gap-3">
+
+            <label class="space-y-1.5">
+                <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Pair
+                </span>
+
+                <select name="symbol"
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+                    <option value="XAU/USD" {{ in_array($selectedSymbol, ['XAU', 'XAU/USD'], true) ? 'selected' : '' }}>XAU/USD</option>
+                    @foreach ($lotCalculatorPairs as $pair)
+                        <option value="{{ $pair }}" {{ $selectedSymbol === $pair ? 'selected' : '' }}>{{ $pair }}</option>
+                    @endforeach
+                </select>
+            </label>
 
             <!-- Line 1: Balance | Risk -->
             <div class="grid grid-cols-2 gap-3">
@@ -61,6 +108,20 @@
                         class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                 </label>
             </div>
+
+            <label class="space-y-1.5 hidden" data-quote-rate-field>
+                <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Quote to USD
+                </span>
+
+                <input name="quote_to_usd" type="text" inputmode="decimal" autocomplete="off" placeholder="1,0000"
+                    value="{{ $setup['quote_to_usd'] ?? '' }}"
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+
+                <p class="text-[11px] leading-5 text-slate-500">
+                    Required only for cross pairs like EUR/GBP, GBP/AUD, or AUD/NZD.
+                </p>
+            </label>
 
 
             <!-- Line 2: Entry | Stop -->
@@ -251,9 +312,11 @@
 
 <script>
     (function () {
-        const pointSize = 0.01;
-        const contractSize = 100;
         const form = document.getElementById('lotCalculatorForm');
+        const symbolInput = form.symbol;
+        const quoteRateField = document.querySelector('[data-quote-rate-field]');
+        const quoteRateInput = form.quote_to_usd;
+        const instrumentHint = document.querySelector('[data-instrument-hint]');
         const resultMessage = document.getElementById('resultMessage');
         const resetButton = document.getElementById('resetButton');
         const numberInputs = Array.from(form.querySelectorAll('input[name]'));
@@ -270,9 +333,41 @@
             bep: document.querySelector('[data-key="bep"] [data-value]'),
         };
         const copyValues = {};
-        let currentSide = 'buy';
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         const saveEndpoint = '/lotcalculator/save';
+        const allowedSymbols = new Set([
+            'XAU/USD',
+            'XAU',
+            'EUR/USD',
+            'GBP/USD',
+            'AUD/USD',
+            'NZD/USD',
+            'USD/CAD',
+            'USD/CHF',
+            'USD/JPY',
+            'EUR/GBP',
+            'EUR/AUD',
+            'EUR/NZD',
+            'EUR/CAD',
+            'GBP/CAD',
+            'AUD/CAD',
+            'NZD/CAD',
+            'EUR/CHF',
+            'GBP/CHF',
+            'AUD/CHF',
+            'NZD/CHF',
+            'EUR/JPY',
+            'GBP/JPY',
+            'AUD/JPY',
+            'NZD/JPY',
+            'CAD/CHF',
+            'CAD/JPY',
+            'CHF/JPY',
+            'GBP/AUD',
+            'GBP/NZD',
+            'AUD/NZD',
+        ]);
+        let currentSide = 'buy';
 
         function sanitizeDecimalInput(value) {
             const text = String(value || '');
@@ -296,19 +391,6 @@
 
         function sanitizeIntegerInput(value) {
             return String(value || '').replace(/[^0-9]/g, '');
-        }
-
-        function getSetupPayload() {
-            return {
-                balance: form.balance.value,
-                risk: form.risk.value,
-                entry: form.entry.value,
-                stop: form.stop.value,
-                tp: form.tp.value,
-                space: form.space.value,
-                spread: form.spread.value,
-                with_bep: withBepToggle.checked ? '1' : '',
-            };
         }
 
         function parseInput(value) {
@@ -336,6 +418,45 @@
 
             const formatted = value.toFixed(digits);
             return formatted.replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
+        }
+
+        function getInstrumentConfig(symbol) {
+            if (symbol === 'XAU' || symbol === 'XAU/USD') {
+                return {
+                    pointSize: 0.01,
+                    contractSize: 100,
+                    displayDigits: 2,
+                    quoteMode: 'usd',
+                    label: 'XAU/USD',
+                };
+            }
+
+            const normalizedSymbol = allowedSymbols.has(symbol) ? symbol : 'XAU/USD';
+            const [base, quote] = normalizedSymbol.split('/');
+            const isJpyQuote = quote === 'JPY';
+
+            return {
+                pointSize: isJpyQuote ? 0.001 : 0.00001,
+                contractSize: 100000,
+                displayDigits: isJpyQuote ? 3 : 5,
+                quoteMode: quote === 'USD' ? 'usd' : base === 'USD' ? 'inverse-entry' : 'manual',
+                label: normalizedSymbol,
+            };
+        }
+
+        function getSetupPayload() {
+            return {
+                symbol: symbolInput.value,
+                balance: form.balance.value,
+                risk: form.risk.value,
+                entry: form.entry.value,
+                stop: form.stop.value,
+                tp: form.tp.value,
+                space: form.space.value,
+                spread: form.spread.value,
+                quote_to_usd: form.quote_to_usd.value,
+                with_bep: withBepToggle.checked ? '1' : '',
+            };
         }
 
         function setSide(side) {
@@ -368,6 +489,23 @@
             }
 
             setSide(stop > entry ? 'sell' : 'buy');
+        }
+
+        function updateInstrumentHint() {
+            const instrument = getInstrumentConfig(symbolInput.value);
+            const pointText = formatReadableNumber(instrument.pointSize, instrument.displayDigits);
+            const quoteModeLabel = instrument.quoteMode === 'usd'
+                ? 'Quote to USD = 1'
+                : instrument.quoteMode === 'inverse-entry'
+                    ? 'Quote to USD is derived from entry'
+                    : 'Quote to USD must be filled manually';
+
+            instrumentHint.textContent = `${instrument.label} uses point size ${pointText}. ${quoteModeLabel}.`;
+
+            quoteRateField.classList.toggle('hidden', instrument.quoteMode !== 'manual');
+            if (instrument.quoteMode === 'usd') {
+                quoteRateInput.value = '1';
+            }
         }
 
         function handleNumericInput(event) {
@@ -414,10 +552,10 @@
             resultMessage.textContent = 'Calculation ready.';
 
             copyValues.volume = formatReadableNumber(values.volume, 4);
-            copyValues.price = formatReadableNumber(values.price, 2);
-            copyValues.stop_loss = formatReadableNumber(values.stopLoss, 2);
-            copyValues.take_profit = formatReadableNumber(values.takeProfit, 2);
-            copyValues.bep = formatReadableNumber(values.bep, 2);
+            copyValues.price = formatReadableNumber(values.price, values.displayDigits);
+            copyValues.stop_loss = formatReadableNumber(values.stopLoss, values.displayDigits);
+            copyValues.take_profit = formatReadableNumber(values.takeProfit, values.displayDigits);
+            copyValues.bep = formatReadableNumber(values.bep, values.displayDigits);
 
             resultRows.volume.textContent = copyValues.volume;
             resultRows.price.textContent = copyValues.price;
@@ -438,6 +576,7 @@
         }
 
         function calculate() {
+            const instrument = getInstrumentConfig(symbolInput.value);
             const balance = parseInput(form.balance.value);
             const risk = parseInput(form.risk.value);
             const entry = parseInput(form.entry.value);
@@ -446,10 +585,29 @@
             const space = parseInput(form.space.value);
             const spread = parseInput(form.spread.value);
             const withBep = withBepToggle.checked;
+            let quoteToUsd;
 
             if ([balance, risk, entry, stop, tp, space, spread].some((value) => Number.isNaN(value))) {
                 clearResults('Silakan isi semua field dengan angka yang valid.');
                 return;
+            }
+
+            if (instrument.quoteMode === 'manual') {
+                quoteToUsd = parseInput(form.quote_to_usd.value);
+
+                if (Number.isNaN(quoteToUsd) || quoteToUsd <= 0) {
+                    clearResults('Isi Quote to USD agar lot bisa dihitung untuk cross pair ini.');
+                    return;
+                }
+            } else if (instrument.quoteMode === 'inverse-entry') {
+                if (entry <= 0) {
+                    clearResults('Entry harus lebih besar dari 0 untuk menghitung konversi quote ke USD.');
+                    return;
+                }
+
+                quoteToUsd = 1 / entry;
+            } else {
+                quoteToUsd = 1;
             }
 
             const riskAmount = balance * (risk / 100);
@@ -457,11 +615,11 @@
             let stopLoss;
 
             if (currentSide === 'buy') {
-                price = entry + ((space + spread) * pointSize);
-                stopLoss = stop - (space * pointSize);
+                price = entry + ((space + spread) * instrument.pointSize);
+                stopLoss = stop - (space * instrument.pointSize);
             } else {
-                price = entry - (space * pointSize);
-                stopLoss = stop + ((space + spread) * pointSize);
+                price = entry - (space * instrument.pointSize);
+                stopLoss = stop + ((space + spread) * instrument.pointSize);
             }
 
             const gap = Math.abs(price - stopLoss);
@@ -475,12 +633,20 @@
                 ? price + (tp * gap)
                 : price - (tp * gap);
 
-            const volume = Math.max(0.01, riskAmount / (gap * contractSize));
+            const volume = Math.max(0.01, riskAmount / (gap * instrument.contractSize * quoteToUsd));
             const bep = currentSide === 'buy'
                 ? price + gap
                 : price - gap;
 
-            updateResults({ volume, price, stopLoss, takeProfit, bep, showBep: withBep });
+            updateResults({
+                volume,
+                price,
+                stopLoss,
+                takeProfit,
+                bep,
+                showBep: withBep,
+                displayDigits: instrument.displayDigits,
+            });
         }
 
         async function saveSetup() {
@@ -524,6 +690,10 @@
             });
         });
 
+        symbolInput.addEventListener('change', function () {
+            updateInstrumentHint();
+        });
+
         form.addEventListener('submit', function (event) {
             event.preventDefault();
             saveSetup().finally(() => {
@@ -534,6 +704,7 @@
         resetButton.addEventListener('click', function () {
             form.reset();
             setSide('buy');
+            updateInstrumentHint();
             bepRow.classList.add('hidden');
             clearResults('Press Count to see the result.');
         });
@@ -544,6 +715,7 @@
             });
         });
 
+        updateInstrumentHint();
         deriveSideFromInputs();
         bepRow.classList.add('hidden');
         clearResults('Press Count to see the result.');
