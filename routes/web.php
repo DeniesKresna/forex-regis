@@ -41,14 +41,19 @@ Route::middleware('guest')->group(function () {
 Route::get('/lotcalculator', function (Request $request) {
   $key = 'calcu_' . md5($request->ip() . '|' . ($request->userAgent() ?? ''));
   $storedSetup = json_decode(Redis::get($key) ?: 'null', true) ?: [];
+  $quoteToUsdConfigRow = DB::table('metatrader_configs')->where('name', 'forex_quote_to_usd')->first();
+  $quoteToUsdConfig = $quoteToUsdConfigRow ? (json_decode($quoteToUsdConfigRow->value, true) ?: []) : [];
 
-  return view('lotcalculator', ['lotCalculatorSetup' => $storedSetup]);
+  return view('lotcalculator', [
+    'lotCalculatorSetup' => $storedSetup,
+    'quoteToUsdConfig' => $quoteToUsdConfig,
+  ]);
 })->name('lotcalculator');
 
 Route::post('/lotcalculator/save', function (Request $request) {
   $key = 'calcu_' . md5($request->ip() . '|' . ($request->userAgent() ?? ''));
   $payload = [
-    'symbol' => (string) $request->input('symbol', 'XAU/USD'),
+    'symbol' => strtoupper(str_replace('/', '', (string) $request->input('symbol', 'XAUUSD'))),
     'balance' => (string) $request->input('balance', ''),
     'risk' => (string) $request->input('risk', ''),
     'entry' => (string) $request->input('entry', ''),
@@ -63,6 +68,10 @@ Route::post('/lotcalculator/save', function (Request $request) {
 
   return response()->noContent();
 })->name('lotcalculator.save');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+  Route::put('/dashboard/config/forex-quote-to-usd', [ConfigController::class, 'updateForexQuoteToUsd'])->name('config.forex-quote-to-usd.update');
+});
 
 Route::post('/logout', [AuthController::class,'logout'])->name('logout');
 Route::middleware(['auth', 'admin'])->group(function () {

@@ -3,37 +3,39 @@
 @section('content')
 @php
     $setup = $lotCalculatorSetup ?? [];
-    $selectedSymbol = $setup['symbol'] ?? 'XAU/USD';
+    $selectedSymbol = strtoupper(str_replace('/', '', (string) ($setup['symbol'] ?? 'XAUUSD')));
+    $quoteToUsdConfig = $quoteToUsdConfig ?? [];
     $lotCalculatorPairs = [
-        'EUR/USD',
-        'GBP/USD',
-        'AUD/USD',
-        'NZD/USD',
-        'USD/CAD',
-        'USD/CHF',
-        'USD/JPY',
-        'EUR/GBP',
-        'EUR/AUD',
-        'EUR/NZD',
-        'EUR/CAD',
-        'GBP/CAD',
-        'AUD/CAD',
-        'NZD/CAD',
-        'EUR/CHF',
-        'GBP/CHF',
-        'AUD/CHF',
-        'NZD/CHF',
-        'EUR/JPY',
-        'GBP/JPY',
-        'AUD/JPY',
-        'NZD/JPY',
-        'CAD/CHF',
-        'CAD/JPY',
-        'CHF/JPY',
-        'GBP/AUD',
-        'GBP/NZD',
-        'AUD/NZD',
+        'EURUSD',
+        'GBPUSD',
+        'AUDUSD',
+        'NZDUSD',
+        'USDCAD',
+        'USDCHF',
+        'USDJPY',
+        'EURGBP',
+        'EURAUD',
+        'EURNZD',
+        'EURCAD',
+        'GBPCAD',
+        'AUDCAD',
+        'NZDCAD',
+        'EURCHF',
+        'GBPCHF',
+        'AUDCHF',
+        'NZDCHF',
+        'EURJPY',
+        'GBPJPY',
+        'AUDJPY',
+        'NZDJPY',
+        'CADCHF',
+        'CADJPY',
+        'CHFJPY',
+        'GBPAUD',
+        'GBPNZD',
+        'AUDNZD',
     ];
+    $recommendedPairs = ['XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY', 'EURGBP', 'GBPJPY', 'EURAUD', 'AUDNZD'];
 @endphp
 <div class="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
     <section data-side-panel
@@ -69,7 +71,7 @@
         </div>
 
         <div class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-900" data-instrument-hint>
-            Point size changes by symbol. Cross pairs with non-USD quote need Quote to USD for exact lot sizing.
+            Point size changes by symbol. Quote currency rates are loaded from config.
         </div>
 
         <form id="lotCalculatorForm" class="mt-4 grid gap-3">
@@ -79,13 +81,14 @@
                     Pair
                 </span>
 
-                <select name="symbol"
+                <input name="symbol" id="pairInput" type="text" list="pairRecommendations" autocomplete="off" spellcheck="false" placeholder="USDJPY"
+                    value="{{ $selectedSymbol }}"
                     class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
-                    <option value="XAU/USD" {{ in_array($selectedSymbol, ['XAU', 'XAU/USD'], true) ? 'selected' : '' }}>XAU/USD</option>
+                <datalist id="pairRecommendations">
                     @foreach ($lotCalculatorPairs as $pair)
-                        <option value="{{ $pair }}" {{ $selectedSymbol === $pair ? 'selected' : '' }}>{{ $pair }}</option>
+                        <option value="{{ $pair }}"></option>
                     @endforeach
-                </select>
+                </datalist>
             </label>
 
             <!-- Line 1: Balance | Risk -->
@@ -108,21 +111,6 @@
                         class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                 </label>
             </div>
-
-            <label class="space-y-1.5 hidden" data-quote-rate-field>
-                <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
-                    Quote to USD
-                </span>
-
-                <input name="quote_to_usd" type="text" inputmode="decimal" autocomplete="off" placeholder="1,0000"
-                    value="{{ $setup['quote_to_usd'] ?? '' }}"
-                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
-
-                <p class="text-[11px] leading-5 text-slate-500">
-                    Required only for cross pairs like EUR/GBP, GBP/AUD, or AUD/NZD.
-                </p>
-            </label>
-
 
             <!-- Line 2: Entry | Stop -->
             <div class="grid grid-cols-2 gap-3">
@@ -313,13 +301,11 @@
 <script>
     (function () {
         const form = document.getElementById('lotCalculatorForm');
-        const symbolInput = form.symbol;
-        const quoteRateField = document.querySelector('[data-quote-rate-field]');
-        const quoteRateInput = form.quote_to_usd;
+        const symbolInput = document.getElementById('pairInput');
         const instrumentHint = document.querySelector('[data-instrument-hint]');
         const resultMessage = document.getElementById('resultMessage');
         const resetButton = document.getElementById('resetButton');
-        const numberInputs = Array.from(form.querySelectorAll('input[name]'));
+        const numberInputs = Array.from(form.querySelectorAll('input[name="balance"], input[name="risk"], input[name="entry"], input[name="stop"], input[name="tp"], input[name="space"], input[name="spread"]'));
         const copyButtons = Array.from(document.querySelectorAll('[data-copy]'));
         const sideBadges = Array.from(document.querySelectorAll('[data-side-badge]'));
         const sidePanels = Array.from(document.querySelectorAll('[data-side-panel]'));
@@ -335,37 +321,37 @@
         const copyValues = {};
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         const saveEndpoint = '/lotcalculator/save';
+        const quoteToUsdConfig = @json($quoteToUsdConfig);
         const allowedSymbols = new Set([
-            'XAU/USD',
-            'XAU',
-            'EUR/USD',
-            'GBP/USD',
-            'AUD/USD',
-            'NZD/USD',
-            'USD/CAD',
-            'USD/CHF',
-            'USD/JPY',
-            'EUR/GBP',
-            'EUR/AUD',
-            'EUR/NZD',
-            'EUR/CAD',
-            'GBP/CAD',
-            'AUD/CAD',
-            'NZD/CAD',
-            'EUR/CHF',
-            'GBP/CHF',
-            'AUD/CHF',
-            'NZD/CHF',
-            'EUR/JPY',
-            'GBP/JPY',
-            'AUD/JPY',
-            'NZD/JPY',
-            'CAD/CHF',
-            'CAD/JPY',
-            'CHF/JPY',
-            'GBP/AUD',
-            'GBP/NZD',
-            'AUD/NZD',
+            'XAUUSD',
+            'EURUSD',
+            'GBPUSD',
+            'AUDUSD',
+            'NZDUSD',
+            'USDCAD',
+            'USDCHF',
+            'USDJPY',
+            'EURGBP',
+            'EURAUD',
+            'EURNZD',
+            'EURCAD',
+            'GBPCAD',
+            'AUDCAD',
+            'NZDCAD',
+            'EURCHF',
+            'GBPCHF',
+            'AUDCHF',
+            'NZDCHF',
+            'EURJPY',
+            'GBPJPY',
+            'AUDJPY',
+            'NZDJPY',
+            'CADCHF',
+            'CADJPY',
+            'CHFJPY',
+            'GBPAUD',
+            'GBPNZD',
+            'AUDNZD',
         ]);
         let currentSide = 'buy';
 
@@ -391,6 +377,30 @@
 
         function sanitizeIntegerInput(value) {
             return String(value || '').replace(/[^0-9]/g, '');
+        }
+
+        function normalizeSymbol(value) {
+            return String(value || '')
+                .trim()
+                .replace(/\s+/g, '')
+                .replace(/\//g, '')
+                .toUpperCase();
+        }
+
+        function findSuggestedSymbol(value) {
+            const normalized = normalizeSymbol(value);
+
+            if (!normalized) {
+                return '';
+            }
+
+            if (allowedSymbols.has(normalized)) {
+                return normalized;
+            }
+
+            const suggestions = Array.from(allowedSymbols).filter((symbol) => symbol.startsWith(normalized));
+
+            return suggestions[0] || normalized;
         }
 
         function parseInput(value) {
@@ -421,32 +431,38 @@
         }
 
         function getInstrumentConfig(symbol) {
-            if (symbol === 'XAU' || symbol === 'XAU/USD') {
+            const normalizedSymbol = normalizeSymbol(symbol);
+
+            if (normalizedSymbol === 'XAU' || normalizedSymbol === 'XAUUSD') {
                 return {
                     pointSize: 0.01,
                     contractSize: 100,
                     displayDigits: 2,
-                    quoteMode: 'usd',
-                    label: 'XAU/USD',
+                    quoteMode: 'config',
+                    quoteToUsd: 1,
+                    label: 'XAUUSD',
                 };
             }
 
-            const normalizedSymbol = allowedSymbols.has(symbol) ? symbol : 'XAU/USD';
-            const [base, quote] = normalizedSymbol.split('/');
+            const selectedSymbol = allowedSymbols.has(normalizedSymbol) ? normalizedSymbol : 'XAUUSD';
+            const base = selectedSymbol.slice(0, 3);
+            const quote = selectedSymbol.slice(3);
             const isJpyQuote = quote === 'JPY';
+            const quoteToUsd = quote === 'USD' ? 1 : Number(quoteToUsdConfig[quote]);
 
             return {
                 pointSize: isJpyQuote ? 0.001 : 0.00001,
                 contractSize: 100000,
                 displayDigits: isJpyQuote ? 3 : 5,
-                quoteMode: quote === 'USD' ? 'usd' : base === 'USD' ? 'inverse-entry' : 'manual',
-                label: normalizedSymbol,
+                quoteMode: Number.isFinite(quoteToUsd) && quoteToUsd > 0 ? 'config' : 'missing-config',
+                quoteToUsd,
+                label: selectedSymbol,
             };
         }
 
         function getSetupPayload() {
             return {
-                symbol: symbolInput.value,
+                symbol: normalizeSymbol(symbolInput.value),
                 balance: form.balance.value,
                 risk: form.risk.value,
                 entry: form.entry.value,
@@ -454,7 +470,6 @@
                 tp: form.tp.value,
                 space: form.space.value,
                 spread: form.spread.value,
-                quote_to_usd: form.quote_to_usd.value,
                 with_bep: withBepToggle.checked ? '1' : '',
             };
         }
@@ -494,18 +509,16 @@
         function updateInstrumentHint() {
             const instrument = getInstrumentConfig(symbolInput.value);
             const pointText = formatReadableNumber(instrument.pointSize, instrument.displayDigits);
-            const quoteModeLabel = instrument.quoteMode === 'usd'
-                ? 'Quote to USD = 1'
-                : instrument.quoteMode === 'inverse-entry'
-                    ? 'Quote to USD is derived from entry'
-                    : 'Quote to USD must be filled manually';
+            const quoteModeLabel = instrument.quoteMode === 'missing-config'
+                ? 'Quote to USD rate belum ada di config admin'
+                : `Quote to USD rate: ${formatReadableNumber(instrument.quoteToUsd, 6)}`;
 
             instrumentHint.textContent = `${instrument.label} uses point size ${pointText}. ${quoteModeLabel}.`;
+        }
 
-            quoteRateField.classList.toggle('hidden', instrument.quoteMode !== 'manual');
-            if (instrument.quoteMode === 'usd') {
-                quoteRateInput.value = '1';
-            }
+        function applyPair(value) {
+            symbolInput.value = findSuggestedSymbol(value);
+            updateInstrumentHint();
         }
 
         function handleNumericInput(event) {
@@ -585,29 +598,15 @@
             const space = parseInput(form.space.value);
             const spread = parseInput(form.spread.value);
             const withBep = withBepToggle.checked;
-            let quoteToUsd;
 
             if ([balance, risk, entry, stop, tp, space, spread].some((value) => Number.isNaN(value))) {
                 clearResults('Silakan isi semua field dengan angka yang valid.');
                 return;
             }
 
-            if (instrument.quoteMode === 'manual') {
-                quoteToUsd = parseInput(form.quote_to_usd.value);
-
-                if (Number.isNaN(quoteToUsd) || quoteToUsd <= 0) {
-                    clearResults('Isi Quote to USD agar lot bisa dihitung untuk cross pair ini.');
-                    return;
-                }
-            } else if (instrument.quoteMode === 'inverse-entry') {
-                if (entry <= 0) {
-                    clearResults('Entry harus lebih besar dari 0 untuk menghitung konversi quote ke USD.');
-                    return;
-                }
-
-                quoteToUsd = 1 / entry;
-            } else {
-                quoteToUsd = 1;
+            if (instrument.quoteMode === 'missing-config' || !Number.isFinite(instrument.quoteToUsd) || instrument.quoteToUsd <= 0) {
+                clearResults('Rate quote currency belum diset di config admin.');
+                return;
             }
 
             const riskAmount = balance * (risk / 100);
@@ -633,7 +632,8 @@
                 ? price + (tp * gap)
                 : price - (tp * gap);
 
-            const volume = Math.max(0.01, riskAmount / (gap * instrument.contractSize * quoteToUsd));
+            const rawVolume = riskAmount / (gap * instrument.contractSize * instrument.quoteToUsd);
+            const volume = Math.max(0.01, Math.floor(rawVolume * 100) / 100);
             const bep = currentSide === 'buy'
                 ? price + gap
                 : price - gap;
@@ -690,7 +690,30 @@
             });
         });
 
+        symbolInput.addEventListener('input', function () {
+            symbolInput.value = symbolInput.value.replace(/\s+/g, '').toUpperCase();
+            updateInstrumentHint();
+        });
+
+        symbolInput.addEventListener('keydown', function (event) {
+            if (event.key !== 'Tab') {
+                return;
+            }
+
+            const suggestedSymbol = findSuggestedSymbol(symbolInput.value);
+
+            if (suggestedSymbol && suggestedSymbol !== normalizeSymbol(symbolInput.value)) {
+                event.preventDefault();
+                applyPair(suggestedSymbol);
+                window.setTimeout(() => {
+                    symbolInput.blur();
+                    calculate();
+                }, 0);
+            }
+        });
+
         symbolInput.addEventListener('change', function () {
+            applyPair(symbolInput.value);
             updateInstrumentHint();
         });
 
@@ -715,7 +738,7 @@
             });
         });
 
-        updateInstrumentHint();
+        applyPair(symbolInput.value);
         deriveSideFromInputs();
         bepRow.classList.add('hidden');
         clearResults('Press Count to see the result.');
