@@ -34,6 +34,7 @@
         'GBPAUD',
         'GBPNZD',
         'AUDNZD',
+        'BTCUSD',
     ];
     $recommendedPairs = ['XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY', 'EURGBP', 'GBPJPY', 'EURAUD', 'AUDNZD'];
 @endphp
@@ -352,6 +353,7 @@
             'GBPAUD',
             'GBPNZD',
             'AUDNZD',
+            'BTCUSD',
         ]);
         let currentSide = 'buy';
 
@@ -441,6 +443,17 @@
                     quoteMode: 'config',
                     quoteToUsd: 1,
                     label: 'XAUUSD',
+                };
+            }
+
+            if (normalizedSymbol === 'BTCUSD') {
+                return {
+                    pointSize: 0.001,
+                    contractSize: 100000,
+                    displayDigits: 3,
+                    quoteMode: 'config',
+                    quoteToUsd: 1,
+                    label: 'BTCUSD',
                 };
             }
 
