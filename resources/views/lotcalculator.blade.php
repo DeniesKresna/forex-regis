@@ -37,53 +37,53 @@
     ];
     $recommendedPairs = ['XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY', 'EURGBP', 'GBPJPY', 'EURAUD', 'AUDNZD'];
 @endphp
-<div class="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
+<div class="grid gap-3 xl:grid-cols-[1.05fr_0.95fr]">
     <section data-side-panel
-        class="rounded-3xl border border-emerald-200 bg-white/95 p-4 text-slate-900 shadow-xl shadow-black/10 backdrop-blur lg:p-5">
-        <div class="flex flex-wrap items-start justify-between gap-3">
+        class="rounded-3xl border border-emerald-200 bg-white/95 p-3 text-slate-900 shadow-xl shadow-black/10 backdrop-blur lg:p-4">
+        <div class="flex flex-wrap items-start justify-between gap-2">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.22em] text-amber-600">Trading Tools</p>
-                <h1 class="mt-1 text-2xl font-semibold">Lot Calculator</h1>
-                <p class="mt-1 max-w-xl text-sm leading-6 text-slate-600">
+                <h1 class="mt-0.5 text-xl font-semibold">Lot Calculator</h1>
+                <p class="mt-1 max-w-xl text-xs leading-5 text-slate-600">
                     Calculate volume, price, stop loss, and take profit in one screen.
                 </p>
             </div>
             <button type="button" data-tab="forex"
-                class="tab-button rounded-full border border-amber-500 bg-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-sm transition">
+                class="tab-button rounded-full border border-amber-500 bg-amber-500 px-3 py-1.5 text-[11px] font-semibold text-white shadow-sm transition">
                 Forex
             </button>
         </div>
 
-        <div class="mt-4 flex items-center justify-between gap-3">
+        <div class="mt-3 flex items-center justify-between gap-2">
             <a href="/"
-                class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50">
                 Back to Home
             </a>
 
             <div
-                class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-2 shadow-sm ring-1 ring-emerald-200">
-                <span class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Auto</span>
+                class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 shadow-sm ring-1 ring-emerald-200">
+                <span class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Auto</span>
                 <span id="sideBadge" data-side-badge
-                    class="rounded-full bg-emerald-500 px-3 py-1 text-sm font-semibold text-white">
+                    class="rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs font-semibold text-white">
                     Buy
                 </span>
             </div>
         </div>
 
-        <div class="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-900" data-instrument-hint>
+        <div class="mt-3 rounded-2xl bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900" data-instrument-hint>
             Point size changes by symbol. Quote currency rates are loaded from config.
         </div>
 
-        <form id="lotCalculatorForm" class="mt-4 grid gap-3">
+        <form id="lotCalculatorForm" class="mt-3 grid gap-2.5">
 
             <label class="space-y-1.5">
-                <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                <span class="text-[11px] font-medium uppercase tracking-wide text-slate-500">
                     Pair
                 </span>
 
                 <input name="symbol" id="pairInput" type="text" list="pairRecommendations" autocomplete="off" spellcheck="false" placeholder="USDJPY"
                     value="{{ $selectedSymbol }}"
-                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+                    class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                 <datalist id="pairRecommendations">
                     @foreach ($lotCalculatorPairs as $pair)
                         <option value="{{ $pair }}"></option>
@@ -92,67 +92,67 @@
             </label>
 
             <!-- Line 1: Balance | Risk -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2.5">
                 <label class="space-y-1.5">
-                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <span class="text-[11px] font-medium uppercase tracking-wide text-slate-500">
                         Balance (USD)
                     </span>
                     <input name="balance" type="text" inputmode="decimal" autocomplete="off" placeholder="1000,00"
                         value="{{ $setup['balance'] ?? '' }}"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                 </label>
 
                 <label class="space-y-1.5">
-                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <span class="text-[11px] font-medium uppercase tracking-wide text-slate-500">
                         Risk (%)
                     </span>
                     <input name="risk" type="text" inputmode="decimal" autocomplete="off" placeholder="1,00"
                         value="{{ $setup['risk'] ?? '' }}"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                 </label>
             </div>
 
             <!-- Line 2: Entry | Stop -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2.5">
                 <label class="space-y-1.5">
-                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <span class="text-[11px] font-medium uppercase tracking-wide text-slate-500">
                         Entry
                     </span>
                     <input name="entry" type="text" inputmode="decimal" autocomplete="off" placeholder="2500,00"
                         value="{{ $setup['entry'] ?? '' }}"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                 </label>
 
                 <label class="space-y-1.5">
-                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <span class="text-[11px] font-medium uppercase tracking-wide text-slate-500">
                         Stop
                     </span>
                     <input name="stop" type="text" inputmode="decimal" autocomplete="off" placeholder="2495,00"
                         value="{{ $setup['stop'] ?? '' }}"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                 </label>
             </div>
 
 
             <!-- Line 3: TP | With BEP -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2.5">
                 <label class="space-y-1.5">
-                    <span class="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <span class="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wide text-slate-500">
                         <span>TP</span>
-                        <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                        <span class="text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-400">
                             RR
                         </span>
                     </span>
 
                     <input name="tp" type="text" inputmode="decimal" autocomplete="off" placeholder="2"
                         value="{{ $setup['tp'] ?? '' }}"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                 </label>
 
-                <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5">
                     <div>
-                        <p class="text-xs font-medium uppercase tracking-wide text-slate-500">With BEP</p>
-                        <p class="text-[11px] leading-5 text-slate-500">Show BEP value.</p>
+                        <p class="text-[11px] font-medium uppercase tracking-wide text-slate-500">With BEP</p>
+                        <p class="text-[10px] leading-4 text-slate-500">Show BEP value.</p>
                     </div>
 
                     <label class="relative inline-flex cursor-pointer items-center">
@@ -165,27 +165,27 @@
 
 
             <!-- Line 4: Spread | Space -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2.5">
                 <label class="space-y-1.5">
-                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <span class="text-[11px] font-medium uppercase tracking-wide text-slate-500">
                         Spread (point)
                     </span>
 
                     <input name="spread" type="text" inputmode="numeric" autocomplete="off" placeholder="20"
                         value="{{ $setup['spread'] ?? '' }}"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
                 </label>
 
                 <label class="space-y-1.5">
-                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <span class="text-[11px] font-medium uppercase tracking-wide text-slate-500">
                         Space (point)
                     </span>
 
                     <input name="space" type="text" inputmode="numeric" autocomplete="off" placeholder="100"
                         value="{{ $setup['space'] ?? '' }}"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200">
 
-                    <p class="text-[11px] leading-5 text-slate-500">
+                    <p class="text-[10px] leading-4 text-slate-500">
                         Tolerance in point.
                     </p>
                 </label>
@@ -193,14 +193,14 @@
 
 
             <!-- Buttons -->
-            <div class="flex flex-wrap gap-3 pt-1">
+            <div class="flex flex-wrap gap-2 pt-0.5">
                 <button type="submit"
-                    class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
+                    class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
                     Count
                 </button>
 
                 <button type="button" id="resetButton"
-                    class="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                    class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
                     Reset
                 </button>
             </div>
@@ -210,85 +210,85 @@
     </section>
 
     <section data-side-panel
-        class="rounded-3xl border border-emerald-900/30 bg-slate-900/95 p-4 text-white shadow-xl shadow-black/20 backdrop-blur lg:p-5">
-        <div class="flex items-center justify-between gap-3">
+        class="rounded-3xl border border-emerald-900/30 bg-slate-900/95 p-3 text-white shadow-xl shadow-black/20 backdrop-blur lg:p-4">
+        <div class="flex items-center justify-between gap-2">
             <div>
-                <h2 class="mt-1 text-xl font-semibold">Result</h2>
+                <h2 class="mt-0.5 text-lg font-semibold">Result</h2>
             </div>
             <span data-side-badge
-                class="rounded-full bg-emerald-500 px-3 py-1 text-sm font-semibold text-white">Buy</span>
+                class="rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs font-semibold text-white">Buy</span>
         </div>
 
         <div id="resultMessage"
-            class="mt-4 rounded-2xl border border-dashed border-white/15 bg-white/5 px-4 py-3 text-sm text-slate-300">
+            class="mt-3 rounded-2xl border border-dashed border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300">
             Press Count to see the result.
         </div>
 
-        <div class="mt-4 grid gap-3">
-            <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3" data-key="volume">
+        <div class="mt-3 grid gap-2.5">
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5" data-key="volume">
                 <div class="flex items-center justify-between gap-3">
                     <div>
-                        <p class="text-xs uppercase tracking-wide text-slate-400">Volume</p>
-                        <p class="mt-1 text-xl font-semibold text-white" data-value>—</p>
+                        <p class="text-[11px] uppercase tracking-wide text-slate-400">Volume</p>
+                        <p class="mt-0.5 text-lg font-semibold text-white" data-value>—</p>
                     </div>
                     <button type="button" data-copy="volume"
-                        class="copy-button rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
+                        class="copy-button rounded-full border border-white/10 bg-white/10 px-2.5 py-1.5 text-[11px] font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
                         disabled>
                         Copy
                     </button>
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3" data-key="price">
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5" data-key="price">
                 <div class="flex items-center justify-between gap-3">
                     <div>
-                        <p class="text-xs uppercase tracking-wide text-slate-400">Price</p>
-                        <p class="mt-1 text-xl font-semibold text-white" data-value>—</p>
+                        <p class="text-[11px] uppercase tracking-wide text-slate-400">Price</p>
+                        <p class="mt-0.5 text-lg font-semibold text-white" data-value>—</p>
                     </div>
                     <button type="button" data-copy="price"
-                        class="copy-button rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
+                        class="copy-button rounded-full border border-white/10 bg-white/10 px-2.5 py-1.5 text-[11px] font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
                         disabled>
                         Copy
                     </button>
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3" data-key="stop_loss">
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5" data-key="stop_loss">
                 <div class="flex items-center justify-between gap-3">
                     <div>
-                        <p class="text-xs uppercase tracking-wide text-slate-400">Stop Loss</p>
-                        <p class="mt-1 text-xl font-semibold text-white" data-value>—</p>
+                        <p class="text-[11px] uppercase tracking-wide text-slate-400">Stop Loss</p>
+                        <p class="mt-0.5 text-lg font-semibold text-white" data-value>—</p>
                     </div>
                     <button type="button" data-copy="stop_loss"
-                        class="copy-button rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
+                        class="copy-button rounded-full border border-white/10 bg-white/10 px-2.5 py-1.5 text-[11px] font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
                         disabled>
                         Copy
                     </button>
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3" data-key="take_profit">
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5" data-key="take_profit">
                 <div class="flex items-center justify-between gap-3">
                     <div>
-                        <p class="text-xs uppercase tracking-wide text-slate-400">Take Profit</p>
-                        <p class="mt-1 text-xl font-semibold text-white" data-value>—</p>
+                        <p class="text-[11px] uppercase tracking-wide text-slate-400">Take Profit</p>
+                        <p class="mt-0.5 text-lg font-semibold text-white" data-value>—</p>
                     </div>
                     <button type="button" data-copy="take_profit"
-                        class="copy-button rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
+                        class="copy-button rounded-full border border-white/10 bg-white/10 px-2.5 py-1.5 text-[11px] font-semibold text-white transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
                         disabled>
                         Copy
                     </button>
                 </div>
             </div>
 
-            <div id="bepRow" class="hidden rounded-2xl border border-emerald-300/30 bg-emerald-500/10 px-4 py-3" data-key="bep">
+            <div id="bepRow" class="hidden rounded-2xl border border-emerald-300/30 bg-emerald-500/10 px-3 py-2.5" data-key="bep">
                 <div class="flex items-center justify-between gap-3">
                     <div>
-                        <p class="text-xs uppercase tracking-wide text-emerald-200">BEP</p>
-                        <p class="mt-1 text-xl font-semibold text-emerald-50" data-value>—</p>
+                        <p class="text-[11px] uppercase tracking-wide text-emerald-200">BEP</p>
+                        <p class="mt-0.5 text-lg font-semibold text-emerald-50" data-value>—</p>
                     </div>
                     <button type="button" data-copy="bep"
-                        class="copy-button rounded-full border border-emerald-300/30 bg-white/10 px-3 py-2 text-xs font-semibold text-emerald-50 transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
+                        class="copy-button rounded-full border border-emerald-300/30 bg-white/10 px-2.5 py-1.5 text-[11px] font-semibold text-emerald-50 transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
                         disabled>
                         Copy
                     </button>
